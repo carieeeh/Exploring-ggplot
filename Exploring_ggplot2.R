@@ -1,0 +1,179 @@
+####################Introduction to ggplot in R#########################
+
+ggplot(data=penguins)+geom_point(mapping=aes(x=flipper_length_mm, y=body_mass_g))
+
+#writing it in different syntax but the same result
+ggplot(data = penguins, mapping=aes(x=flipper_length_mm, y=body_mass_g)) + geom_point()
+ggplot(data = penguins, mapping=aes(x=bill_length_mm, y=bill_depth_mm)) + geom_point()
+
+#Activity ggplot using CSV
+
+hotel_bookings <- read.csv("hotel_bookings.csv")
+head(hotel_bookings)
+colnames(hotel_bookings)
+
+ggplot(data = hotel_bookings) +
+  geom_point(mapping = aes(x=lead_time, y=children))
+
+ggplot(data = hotel_bookings) +
+  geom_point(mapping = aes(x=stays_in_weekend_nights, y=children))
+
+#Assigning color to every species
+ggplot(data=penguins)+geom_point(mapping=aes(x=flipper_length_mm, y=body_mass_g, color=species))
+
+#Changing the aesthetics to shape of every species
+ggplot(data=penguins)+geom_point(mapping=aes(x=flipper_length_mm, y=body_mass_g, shape=species))
+
+#using color,shape, and size
+ggplot(data=penguins)+geom_point(mapping=aes(x=flipper_length_mm, y=body_mass_g, color=species, shape=species, size=species))
+
+#Using alpha for black and white
+ggplot(data=penguins)+geom_point(mapping=aes(x=flipper_length_mm, y=body_mass_g, alpha=species))
+
+#Changing color to a desired value
+ggplot(data=penguins)+geom_point(mapping=aes(x=flipper_length_mm, y=body_mass_g), color="purple")
+
+#using geom_smooth to identify data trend even when you can't easily notice a trend from the plotted data
+ggplot(data=penguins) +
+  geom_smooth(mapping = aes(x=flipper_length_mm, y=body_mass_g), color="purple")
+
+#####two types of smoothing######
+
+# LOESS best for smoothing plots with less than 1000 points
+ggplot(data=penguins, aes(x=flipper_length_mm, y=body_mass_g))+ 
+  geom_point() +       
+  geom_smooth(method="loess")
+
+# GAM useful for smoothing plots with a large number of points
+ggplot(data=penguins, aes(x=flipper_length_mm, y=body_mass_g)) + 
+  geom_point() +        
+  geom_smooth(method="gam", 
+              formula = y ~s(x))
+
+#Using linetype for each species
+ggplot(data=penguins) +
+  geom_smooth(mapping = aes(x=flipper_length_mm, y=body_mass_g, linetype=species))
+
+#Using geom_jitter to deal with over-plotting
+ggplot(data=penguins) +
+  geom_jitter(mapping = aes(x=flipper_length_mm, y=body_mass_g))
+
+# Using geom_bar
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x=cut, fill=cut)) #fill aesthetics allows to fill colors in the bars
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x=cut, fill=clarity)) #fill clarity allows to stack colors in the bar
+
+# using facet_wrap
+ggplot(data = penguins) +
+  geom_point(mapping = aes(x=flipper_length_mm, y=body_mass_g, color=species)) + 
+  facet_wrap(~species) #allows to create separate graphs per species
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x=color, fill=cut)) +
+  facet_wrap(~cut)
+
+# using facet_grid
+ggplot(data = penguins) +
+  geom_point(mapping = aes(x=flipper_length_mm, y=body_mass_g, color=species)) + 
+  facet_grid(sex~species) #splits the plot into facets vertically by the values of first var and horizontally on the second
+
+# Activity 2 ggplot
+hotel_bookings <- read.csv("hotel_bookings.csv")
+head(hotel_bookings)
+
+ggplot(data=hotel_bookings) +
+  geom_bar(mapping= aes(x=distribution_channel, fill=deposit_type))
+
+ggplot(data=hotel_bookings) +
+  geom_bar(mapping= aes(x=distribution_channel, fill=market_segment))
+
+ggplot(data=hotel_bookings) +
+  geom_bar(mapping= aes(x = distribution_channel)) +
+  facet_wrap(~deposit_type)
+
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = distribution_channel, fill=deposit_type)) +
+  facet_wrap(~deposit_type) +
+  theme(axis.text.x = element_text(angle = 45)) # make x-axis labels to 45 degrees for readability
+
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = distribution_channel, fill=market_segment)) +
+  facet_wrap(~market_segment) +
+  theme(axis.text.x = element_text(angle = 45))
+
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = distribution_channel)) +
+  facet_grid(~deposit_type) +
+  theme(axis.text.x = element_text(angle = 45))
+
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = distribution_channel)) +
+  facet_wrap(~deposit_type~market_segment) +
+  theme(axis.text.x = element_text(angle = 45))
+
+# Activity 3
+
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = hotel, fill = market_segment))
+
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = hotel)) +
+  facet_wrap(~market_segment)
+
+onlineta_city_hotels <- filter(hotel_bookings,
+                               (hotel=="City Hotel" &
+                                  hotel_bookings$market_segment=="Online TA"))
+view(onlineta_city_hotels)
+
+onlineta_city_hotels_V2 <- hotel_bookings %>% 
+  filter(hotel=="City Hotel") %>% 
+  filter(market_segment=="Online TA")
+View(onlineta_city_hotels_V2)
+
+ggplot(data = onlineta_city_hotels) +
+  geom_point(mapping = aes(x = lead_time, y = children))
+
+# Annotations
+ggplot(data=penguins) +
+  geom_point(mapping=aes(x=flipper_length_mm, y=body_mass_g, color=species)) +
+  labs(title = "Palmer Penguins: Body Mass vs. Flipper Length", subtitle= "Sample of Three Species",
+       caption = "Data collected on 2007 to 2009") +
+  annotate("text", x=220, y=3500, label="The Gentoo species are the largest", color="red",
+           fontface="bold", size=4, angle=25)
+
+ggsave("Three Penguin Species.png") #saving ggplot to image
+
+
+#Activity 4
+
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = market_segment)) +
+  facet_wrap(~hotel) +
+  labs(title="Comparison of market segments by hotel type for hotel bookings")
+
+mindate <- min(hotel_bookings$arrival_date_year)
+maxdate <- max(hotel_bookings$arrival_date_year)
+
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = market_segment)) +
+  facet_wrap(~hotel) +
+  labs(title="Comparison of market segments by hotel type for hotel bookings",
+       subtitle=paste0("Data from: ", mindate, " to ", maxdate))
+
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = market_segment)) +
+  facet_wrap(~hotel) +
+  labs(title="Comparison of market segments by hotel type for hotel bookings",
+       caption=paste0("Data from: ", mindate, " to ", maxdate))
+
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = market_segment)) +
+  facet_wrap(~hotel) +
+  labs(title="Comparison of market segments by hotel type for hotel bookings",
+       caption=paste0("Data from: ", mindate, " to ", maxdate),
+       x="Market Segment",
+       y="Number of Bookings")
+
+ggsave("hotel_booking_chart.png", width = 7, height = 7)
